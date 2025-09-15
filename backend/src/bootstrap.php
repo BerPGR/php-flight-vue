@@ -11,7 +11,7 @@ Flight::set('config', [
     'app_env' => $_ENV['APP_ENV'] ?? "dev",
     'front_origin' => $_ENV['APP_FRONT_ORIGIN'] ?? 'http://localhost:5173',
     'db' => [
-        'dsn' => $_ENV['DB_DSN'] ?? 'sqlite:banco.sqlite',
+        'dsn' => $_ENV['DB_DSN'] ?? 'sqlite:' . __DIR__ . "/../banco.sqlite",
         'user' => $_ENV['user'] ?? 'root',
         'pass' => $_ENV['password'] ?? '',
     ],
@@ -19,6 +19,7 @@ Flight::set('config', [
 
 Flight::before('start', function () {
     $conf = Flight::get('config');
+    header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: ' . $conf['front_origin']);
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
