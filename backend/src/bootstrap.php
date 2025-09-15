@@ -7,7 +7,7 @@ use PDO;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
-Flight::set('config' . [
+Flight::set('config', [
     'app_env' => $_ENV['APP_ENV'] ?? "dev",
     'front_origin' => $_ENV['APP_FRONT_ORIGIN'] ?? 'http://localhost:5173',
     'db' => [
@@ -23,11 +23,9 @@ Flight::before('start', function () {
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-        http_response_code(204);
-        exit;
-    }
-});
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204); exit; }
+  });
+  
 
 $config = Flight::get('config');
 Flight::register('pdo', PDO::class, [
@@ -64,4 +62,4 @@ Flight::map('notFound', function() {
     Flight::json(['error' => true, 'message' => 'Rota não encontrada'], 404);
 });
 
-require __DIR__ .'../Routes.php';
+require __DIR__ .'/Routes.php';

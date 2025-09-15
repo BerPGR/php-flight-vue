@@ -1,28 +1,49 @@
 <?php
-
 namespace App\Controllers;
+
 use App\Services\ProjectService;
 use Flight;
 use PDO;
 
-class ProjectController {
-    public function __construct(
-        private PDO $pdo,
-    ) {}
+class ProjectController
+{
+  /** @var PDO */
+  private $pdo;
 
-    public function index() {
-        $service = new ProjectService($this->pdo);
-        $projects = $service->list();
-        Flight::json($projects, 200);
+  public function __construct(PDO $pdo) { $this->pdo = $pdo; }
+
+  // GET /api/projects
+  public function index(): void
+  {
+    $service = new ProjectService($this->pdo);
+    $projects = $service->list();
+    error_log('[projects.index] rows=' . count($projects));
+    Flight::json($projects, 200);
+  }
+
+  // POST /api/projects
+  public function store(): void
+  {
+    $req = Flight::request();
+
+    $raw = $req->getBody() ?? '';
+    error_log('[projects.store] raw_body=' . $raw);
+
+    // tenta JSON
+    $payload = json_decode($raw, true);
+    // se não for JSON, tenta pegar form-data/x-www-form-urlencoded
+    if (!is_array($payload) || empty($payload)) {
+      $payload = $req->data ? $req->data->getData() : [];
     }
+    error_log('[projects.store] payload=' . json_encode($payload, JSON_UNESCAPED_UNICODE));
 
-    public function store() {
-        $payload = json_decode(Flight::request()->getBody(), true);
+    $name   = isset($payload['name']) ? (string) $payload['name'] : '';
+    $status = isset($payload['status']) ? (string) $payload['status'] : 'active';
 
-        $service = new ProjectService($this->pdo);
-        $created = $service->create($payload['name'] ?? null, $payload['status'] ?? 'active');
-        if ($created) {
-            Flight::json($created, 201);
-        }
-    }
+    $service = new ProjectService($this->pdo);
+    $created = $service->create($name, $status);
+
+    error_log('[projects.store] created=' . json_encode($created));
+    Flight::json($created, 201);
+  }
 }

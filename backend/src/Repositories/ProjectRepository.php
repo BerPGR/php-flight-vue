@@ -1,22 +1,41 @@
 <?php
-
 namespace App\Repositories;
 
 use PDO;
+use RuntimeException;
 
-class ProjectRepository {
-    public function __construct(private PDO $pdo) {}
+class ProjectRepository
+{
+  /** @var PDO */
+  private $pdo;
 
-    public function all() {
-        $stmt = $this->pdo->query("SELECT id, name, status, created_at FROM project WHERE id = :id");
-        return $stmt->fetchAll();
+  public function __construct(PDO $pdo) { $this->pdo = $pdo; }
+
+  public function all(): array
+  {
+    $stmt = $this->pdo->query(
+      'SELECT id, name, status, created_at FROM projects ORDER BY created_at DESC'
+    );
+    return $stmt->fetchAll();
+  }
+
+  public function insert(string $name, string $status): int
+  {
+    $stmt = $this->pdo->prepare(
+      'INSERT INTO projects (name, status) VALUES (:name, :status)'
+    );
+    $ok = $stmt->execute([':name' => $name, ':status' => $status]);
+
+    if (!$ok) {
+      $err = $stmt->errorInfo();
+      throw new RuntimeException('INSERT falhou: ' . ($err[2] ?? 'motivo desconhecido'));
     }
 
-    public function insert(string $name, string $status) {
-        $stmt = $this->pdo->prepare("INSERT INTO projects (name, status, created_at VALUES (:name, :status, NOW());");
-        $stmt->bindValue(":name", $name);
-        $stmt->bindValue(":status", $status);
-        $stmt->execute();
-        return (int) $this->pdo->lastInsertId();
+    $id = (int) $this->pdo->lastInsertId();
+    if ($id <= 0) {
+      // não deveria acontecer com INTEGER PRIMARY KEY AUTOINCREMENT
+      throw new RuntimeException('lastInsertId() retornou 0');
     }
+    return $id;
+  }
 }
