@@ -1,20 +1,20 @@
 <?php return array(
     'root' => array(
-        'name' => '__root__',
+        'name' => 'fab/projeto-teste',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '3af62914d7572e645350732c9211b1126185246f',
-        'type' => 'library',
+        'reference' => '36d3c3d8a4ae8e8271203e0c693d52d569c8cf5c',
+        'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        '__root__' => array(
+        'fab/projeto-teste' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '3af62914d7572e645350732c9211b1126185246f',
-            'type' => 'library',
+            'reference' => '36d3c3d8a4ae8e8271203e0c693d52d569c8cf5c',
+            'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
