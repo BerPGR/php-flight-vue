@@ -7,10 +7,7 @@ use PDO;
 
 class ProjectController
 {
-  /** @var PDO */
-  private $pdo;
-
-  public function __construct(PDO $pdo) { $this->pdo = $pdo; }
+  public function __construct(private PDO $pdo) {}
 
   // GET /api/projects
   public function index(): void

@@ -6,10 +6,7 @@ use RuntimeException;
 
 class ProjectRepository
 {
-  /** @var PDO */
-  private $pdo;
-
-  public function __construct(PDO $pdo) { $this->pdo = $pdo; }
+  public function __construct(private PDO $pdo) {}
 
   public function all(): array
   {
